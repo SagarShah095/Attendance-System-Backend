@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
+const departmentRoute = require("./routes/departmentRoute");
 
 dotenv.config();
 connectDB();
@@ -15,7 +15,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/department", departmentRoute);
+
 
 app.get("/", (req, res) => {
   res.send("Server running 🚀");
