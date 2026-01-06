@@ -12,7 +12,7 @@ router.use(express.json());
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/get-employee", protect, getAllEmployees);
+router.get("/get-employee", getAllEmployees);
 router.get("/me", protect, getMe);
 
 module.exports = router;

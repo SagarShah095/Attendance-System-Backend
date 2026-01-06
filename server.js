@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const departmentRoute = require("./routes/departmentRoute");
+const leaveRoute = require("./routes/leaveRoutes");
 
 dotenv.config();
 connectDB();
@@ -16,7 +17,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/department", departmentRoute);
-
+app.use("/api/leave", leaveRoute);
 
 app.get("/", (req, res) => {
   res.send("Server running 🚀");
