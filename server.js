@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const departmentRoute = require("./routes/departmentRoute");
 const leaveRoute = require("./routes/leaveRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
 
 dotenv.config();
 connectDB();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/department", departmentRoute);
 app.use("/api/leave", leaveRoute);
+app.use("/api/attendance", attendanceRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server running 🚀");
