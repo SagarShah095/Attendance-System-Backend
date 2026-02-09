@@ -100,6 +100,7 @@ exports.login = async (req, res) => {
     res.json({
       message: "Login successful",
       token,
+      user
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -116,6 +117,7 @@ exports.getAllEmployees = async (req, res) => {
       success: true,
       count: employees.length,
       data: employees,
+      message: "Employees fetched successfully",
     });
   } catch (error) {
     res.status(500).json({
@@ -126,7 +128,91 @@ exports.getAllEmployees = async (req, res) => {
 };
 
 exports.getMe = async (req, res) => {
-    res.status(200).json(req.user);
+  res.status(200).json(req.user);
+};
+
+// UPDATE EMPLOYEE
+exports.updateEmployee = async (req, res) => {
+  const { id } = req.params;
+  const {
+    email,
+    role,
+    name,
+    profilePicture,
+    gender,
+    dateOfBirth,
+    phoneNumber,
+    salary,
+    position,
+    department,
+    address,
+    city
+  } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if email is being updated and if it's already taken
+    if (email && email !== user.email) {
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+    }
+
+    user.email = email || user.email;
+    user.role = role || user.role;
+    user.name = name || user.name;
+    user.profilePicture = profilePicture || user.profilePicture;
+    user.gender = gender || user.gender;
+    user.dateOfBirth = dateOfBirth || user.dateOfBirth;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.salary = salary || user.salary;
+    user.position = position || user.position;
+    user.department = department || user.department;
+    user.address = address || user.address;
+    user.city = city || user.city;
+
+    // Only update password if provided
+    if (req.body.password) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// DELETE EMPLOYEE
+exports.deleteEmployee = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 
