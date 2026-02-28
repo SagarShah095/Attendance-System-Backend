@@ -17,7 +17,8 @@ exports.register = async (req, res) => {
     position,
     department,
     address,
-    city
+    city,
+    hrPermissions
   } = req.body;
 
   try {
@@ -37,6 +38,11 @@ exports.register = async (req, res) => {
       !city
     ) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Role escalation check
+    if ((role === "admin" || role === "hr") && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Only an admin can assign 'admin' or 'hr' roles." });
     }
 
     // Check existing user
@@ -63,6 +69,7 @@ exports.register = async (req, res) => {
       department,
       address,
       city,
+      hrPermissions: role === "hr" ? hrPermissions : undefined,
     });
 
     res.status(201).json({
@@ -110,7 +117,7 @@ exports.login = async (req, res) => {
 exports.getAllEmployees = async (req, res) => {
   try {
     const employees = await User.find({
-      role: { $ne: "admin" }
+      role: { $in: ["employee", "hr"] }
     }).select("-password");
 
     res.status(200).json({
@@ -146,10 +153,16 @@ exports.updateEmployee = async (req, res) => {
     position,
     department,
     address,
-    city
+    city,
+    hrPermissions
   } = req.body;
 
   try {
+    // Role escalation check for update
+    if (role && (role === "admin" || role === "hr") && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Only an admin can assign 'admin' or 'hr' roles." });
+    }
+
     const user = await User.findById(id);
 
     if (!user) {
@@ -176,6 +189,10 @@ exports.updateEmployee = async (req, res) => {
     user.department = department || user.department;
     user.address = address || user.address;
     user.city = city || user.city;
+
+    if (role === "hr" && hrPermissions) {
+      user.hrPermissions = hrPermissions;
+    }
 
     // Only update password if provided
     if (req.body.password) {

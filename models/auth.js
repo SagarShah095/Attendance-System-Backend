@@ -14,7 +14,13 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ["admin", "employee"],
+      enum: ["admin", "employee", "hr"],
+    },
+    hrPermissions: {
+      viewSalary: { type: Boolean, default: false },
+      createEmployee: { type: Boolean, default: false },
+      editEmployee: { type: Boolean, default: false },
+      deleteEmployee: { type: Boolean, default: false },
     },
     name: {
       type: String,
