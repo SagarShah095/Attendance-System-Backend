@@ -29,20 +29,28 @@ exports.register = async (req, res) => {
       !role ||
       !name ||
       !gender ||
-      !dateOfBirth ||
-      !phoneNumber ||
-      !salary ||
-      !position ||
-      !department ||
-      !address ||
-      !city
+      !dateOfBirth
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     // Role escalation check
-    if ((role === "admin" || role === "hr") && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Only an admin can assign 'admin' or 'hr' roles." });
+    if (role === "admin" || role === "hr") {
+      // Allow if no admin exists yet
+      const adminExists = await User.findOne({ role: "admin" });
+      if (adminExists) {
+        let currentUser;
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+          try {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            currentUser = await User.findById(decoded.id);
+          } catch (error) { }
+        }
+        if (!currentUser || currentUser.role !== "admin") {
+          return res.status(403).json({ message: "Only an admin can assign 'admin' or 'hr' roles." });
+        }
+      }
     }
 
     // Check existing user

@@ -4,10 +4,10 @@ exports.addDept = async (req, res) => {
   const { department, description } = req.body;
 
   try {
-    if (!department || !description) {
+    if (!department) {
       return res
         .status(400)
-        .json({ success: false, message: "All fields are required" });
+        .json({ success: false, message: "Department field is required" });
     }
 
     const dept = await Department.create({

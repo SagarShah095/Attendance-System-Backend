@@ -13,7 +13,7 @@ const checkPermission = require("../middlewares/checkPermission");
 
 router.use(express.json());
 
-router.post("/register", protect, checkPermission('createEmployee'), register);
+router.post("/register", register);
 router.post("/login", login);
 router.get("/get-employee", protect, getAllEmployees);
 router.get("/me", protect, getMe);

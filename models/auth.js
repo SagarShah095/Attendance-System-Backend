@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
+      required: false,
     },
     gender: {
       type: String,
@@ -47,7 +48,7 @@ const userSchema = new mongoose.Schema(
     },
     position: {
       type: String,
-      required: true,
+      required: false,
     },
     department: {
       type: String,
@@ -55,9 +56,11 @@ const userSchema = new mongoose.Schema(
     },
     address: {
       type: String,
+      required: false,
     },
     city: {
       type: String,
+      required: false,
     },
   },
   { timestamps: true }
